@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class TmdbNetworkManager {
+public class TmdbNetworkManager {
     private let apiClient: APIClient
     
     init(apiClient: APIClient) {
