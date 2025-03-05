@@ -4,7 +4,7 @@ import Combine
 public class TmdbNetworkManager {
     private let apiClient: APIClient
     
-    init(apiClient: APIClient) {
+    public init(apiClient: APIClient) {
         self.apiClient = apiClient
     }
     
