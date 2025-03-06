@@ -43,4 +43,13 @@ public struct MovieResponse: Decodable, Identifiable {
         if posterPath!.isEmpty { return nil }
         return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath!)")!
     }
+    
+    public var releaseYear: String? {
+        guard let releaseDate = releaseDate else { return nil }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        guard let date = dateFormatter.date(from: releaseDate) else { return nil }
+        dateFormatter.dateFormat = "yyyy"
+        return dateFormatter.string(from: date)
+    }
 }
