@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PopularMoviesResponse: Decodable {
+struct MoviesResponse: Decodable {
     let page: Int
     let results: [MovieResponse]
     let totalPages, totalResults: Int

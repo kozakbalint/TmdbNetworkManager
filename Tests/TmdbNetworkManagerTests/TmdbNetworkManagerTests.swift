@@ -28,9 +28,26 @@ final class TmdbNetworkManagerTests: XCTestCase {
     
     
     func testGetPopularMovies() throws {
-        let expectation = XCTestExpectation(description: "Fetch movies")
+        let expectation = XCTestExpectation(description: "Fetch popular movies")
         
         networkManager.getPopularMovies(page: 1)
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    XCTFail("Failed with error: \(error)")
+                }
+            }, receiveValue: { movies in
+                XCTAssertFalse(movies.isEmpty, "Movies should not be empty")
+                expectation.fulfill()
+            })
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 5)
+    }
+    
+    func testSearchMovies() throws {
+        let expectation = XCTestExpectation(description: "Search movies")
+        
+        networkManager.searchMovies(query: "the matrix")
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
                     XCTFail("Failed with error: \(error)")
