@@ -18,6 +18,13 @@ public class TmdbNetworkManager {
             .eraseToAnyPublisher()
     }
     
+    public func getTopRatedMovies(page: Int = 1) -> AnyPublisher<[MovieResponse], Error> {
+        return apiClient.fetch(endpoint: .topRatedMovies(page: page))
+            .decode(type: MoviesResponse.self, decoder: decoder)
+            .map { $0.results }
+            .eraseToAnyPublisher()
+    }
+    
     public func searchMovies(query: String) -> AnyPublisher<[MovieResponse], Error> {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             let error = URLError(.badURL)

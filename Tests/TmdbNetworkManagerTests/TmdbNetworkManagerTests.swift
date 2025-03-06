@@ -44,6 +44,23 @@ final class TmdbNetworkManagerTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
+    func testTopRatedMovies() throws {
+        let expectation = XCTestExpectation(description: "Fetch top rated movies")
+        
+        networkManager.getTopRatedMovies(page: 1)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    XCTFail("Failed with error: \(error)")
+                }
+            } receiveValue: { movies in
+                XCTAssertFalse(movies.isEmpty, "Movies should not be empty")
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 5)
+    }
+    
     func testSearchMovies() throws {
         let expectation = XCTestExpectation(description: "Search movies")
         

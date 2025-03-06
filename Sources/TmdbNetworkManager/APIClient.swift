@@ -43,6 +43,7 @@ public class APIClient {
 
 public enum APIEndpoint {
     case popularMovies(page: Int)
+    case topRatedMovies(page: Int)
     case searchMovies(query: String)
     case movieDetails(id: Int)
     
@@ -50,6 +51,8 @@ public enum APIEndpoint {
         switch self {
         case .popularMovies(let page):
             return "/movie/popular?page=\(page)"
+        case .topRatedMovies(let page):
+            return "/movie/top_rated?page=\(page)"
         case .searchMovies(let query):
             return "/search/movie?query=\(query)"
         case .movieDetails(id: let id):
