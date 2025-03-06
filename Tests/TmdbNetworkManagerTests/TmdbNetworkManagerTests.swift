@@ -60,4 +60,22 @@ final class TmdbNetworkManagerTests: XCTestCase {
         
         wait(for: [expectation], timeout: 5)
     }
+    
+    func testGetMovieDetails() throws {
+        let expectation = XCTestExpectation(description: "Get movie details")
+        let movieId = 808
+        
+        networkManager.getMovieDetails(id: movieId)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    XCTFail("Failed with error: \(error)")
+                }
+            } receiveValue: { movie in
+                XCTAssertTrue(movie.id == movieId, "Movie ID should be \(movieId)")
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 5)
+    }
 }

@@ -30,4 +30,10 @@ public class TmdbNetworkManager {
             .map { $0.results }
             .eraseToAnyPublisher()
     }
+    
+    public func getMovieDetails(id: Int) -> AnyPublisher<MovieDetailsResponse, Error> {
+        return apiClient.fetch(endpoint: .movieDetails(id: id))
+            .decode(type: MovieDetailsResponse.self, decoder: decoder)
+            .eraseToAnyPublisher()
+    }
 }
