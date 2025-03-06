@@ -58,6 +58,12 @@ public struct MovieDetailsResponse: Decodable, Identifiable {
         self.voteAverage = voteAverage
         self.voteCount = voteCount
     }
+    
+    public var posterURL: URL? {
+        if posterPath == nil { return nil }
+        if posterPath!.isEmpty { return nil }
+        return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath!)")!
+    }
 }
 
 public struct BelongsToCollection: Decodable {
