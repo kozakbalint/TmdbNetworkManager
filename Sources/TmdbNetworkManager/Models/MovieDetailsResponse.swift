@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MovieDetailsResponse: Decodable, Identifiable {
+public struct MovieDetailsResponse: Codable, Identifiable {
     public let adult: Bool
     public let backdropPath: String?
     public let belongsToCollection: BelongsToCollection?
@@ -75,7 +75,7 @@ public struct MovieDetailsResponse: Decodable, Identifiable {
     }
 }
 
-public struct BelongsToCollection: Decodable {
+public struct BelongsToCollection: Codable {
     public let id: Int
     public let name, posterPath, backdropPath: String?
     
@@ -87,7 +87,7 @@ public struct BelongsToCollection: Decodable {
     }
 }
 
-public struct Genre: Decodable {
+public struct Genre: Codable {
     public let id: Int
     public let name: String?
     
@@ -97,7 +97,7 @@ public struct Genre: Decodable {
     }
 }
 
-public struct ProductionCompany: Decodable {
+public struct ProductionCompany: Codable {
     public let id: Int
     public let logoPath, name, originCountry: String?
     
@@ -109,7 +109,7 @@ public struct ProductionCompany: Decodable {
     }
 }
 
-public struct ProductionCountry: Decodable {
+public struct ProductionCountry: Codable {
     public let iso31661, name: String?
     
     public init(iso31661: String?, name: String?) {
@@ -118,7 +118,7 @@ public struct ProductionCountry: Decodable {
     }
 }
 
-public struct SpokenLanguage: Decodable {
+public struct SpokenLanguage: Codable {
     public let englishName, iso6391, name: String?
     
     public init(englishName: String?, iso6391: String?, name: String?) {
