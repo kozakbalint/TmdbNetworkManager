@@ -43,4 +43,10 @@ public class TmdbNetworkManager {
             .decode(type: MovieDetailsResponse.self, decoder: decoder)
             .eraseToAnyPublisher()
     }
+    
+    public func addRatingToMovie(id: Int, value: Double) -> AnyPublisher<RatingResponse, Error> {
+        return apiClient.post(endpoint: .addRatingToMovie(id: id), parameters: ["value": value])
+            .decode(type: RatingResponse.self, decoder: decoder)
+            .eraseToAnyPublisher()
+    }
 }

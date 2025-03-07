@@ -9,11 +9,11 @@ import Foundation
 import Combine
 
 public class APIClient {
-    private let apiKey: String
+    private let authToken: String
     private let baseURL = "https://api.themoviedb.org/3"
     
-    public init(apiKey: String) {
-        self.apiKey = apiKey
+    public init(authToken: String) {
+        self.authToken = authToken
     }
     
     public func fetch(endpoint: APIEndpoint) -> AnyPublisher<Data, URLError> {
@@ -21,21 +21,44 @@ public class APIClient {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
         
-        return URLSession.shared.dataTaskPublisher(for: url)
+        var request = URLRequest(url: url)
+        request.addValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        
+        return URLSession.shared.dataTaskPublisher(for: request)
             .map { $0.data }
             .eraseToAnyPublisher()
     }
     
+    public func post(endpoint: APIEndpoint, parameters: [String: Any]) -> AnyPublisher<Data, Error> {
+        guard let url = getFetchUrl(endpoint: endpoint) else {
+            return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json;charset=utf-8", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        } catch {
+            return Fail(error: URLError(.cannotParseResponse)).eraseToAnyPublisher()
+        }
+        
+        return URLSession.shared.dataTaskPublisher(for: request)
+            .tryMap { data, response in
+                guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                    throw URLError(.badServerResponse)
+                }
+                return data
+            }
+            .eraseToAnyPublisher()
+    }
+    
     private func getFetchUrl(endpoint: APIEndpoint) -> URL? {
-        guard var urlComponents = URLComponents(string: "\(baseURL)\(endpoint.path)") else {
+        guard let urlComponents = URLComponents(string: "\(baseURL)\(endpoint.path)") else {
             return nil
         }
-        
-        if urlComponents.queryItems == nil {
-            urlComponents.queryItems = []
-        }
-        
-        urlComponents.queryItems?.append(URLQueryItem(name: "api_key", value: apiKey))
         
         return urlComponents.url
     }
@@ -46,6 +69,7 @@ public enum APIEndpoint {
     case topRatedMovies(page: Int)
     case searchMovies(query: String)
     case movieDetails(id: Int)
+    case addRatingToMovie(id: Int)
     
     var path: String {
         switch self {
@@ -57,6 +81,8 @@ public enum APIEndpoint {
             return "/search/movie?query=\(query)"
         case .movieDetails(id: let id):
             return "/movie/\(id)"
+        case .addRatingToMovie(let id):
+            return "/movie/\(id)/rating"
         }
     }
 }

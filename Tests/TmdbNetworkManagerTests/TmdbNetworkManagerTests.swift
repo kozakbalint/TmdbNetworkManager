@@ -10,12 +10,12 @@ final class TmdbNetworkManagerTests: XCTestCase {
         try super.setUpWithError()
         cancellables = []
         
-        guard let apiKey = ProcessInfo.processInfo.environment["TMDB_API_KEY"] else {
+        guard let apiKey = ProcessInfo.processInfo.environment["TMDB_AUTH_TOKEN"] else {
             XCTFail("No api key set")
             return
         }
         
-        let apiClient = APIClient(apiKey: apiKey)
+        let apiClient = APIClient(authToken: apiKey)
         networkManager = TmdbNetworkManager(apiClient: apiClient)
     }
     
@@ -93,6 +93,25 @@ final class TmdbNetworkManagerTests: XCTestCase {
             }
             .store(in: &cancellables)
         
+        wait(for: [expectation], timeout: 5)
+    }
+    
+    func testAddRatingToMovies() throws {
+        let expectation = XCTestExpectation(description: "Add rating to movie")
+        let movieId = 808
+        let rating = 9.0
+        
+        networkManager.addRatingToMovie(id: movieId, value: rating)
+            .sink { completion in
+                if case .failure(let error) = completion {
+                    XCTFail("Failed with error: \(error)")
+                }
+            } receiveValue: { response in
+                print(response)
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
+
         wait(for: [expectation], timeout: 5)
     }
 }
