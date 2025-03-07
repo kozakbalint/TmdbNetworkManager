@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MovieResponse: Decodable, Identifiable {
+public struct MovieResponse: Codable, Identifiable {
     public let adult: Bool
     public let backdropPath: String?
     public let genreIds: [Int]
